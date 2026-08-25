@@ -63,7 +63,7 @@ class OverrideProject(GradleProject):
     def __init__(self):
         super().__init__()
 
-    def __install_site_packages(self) -> None:
+    def install_site_packages(self) -> None:
         """Install the project (and its deps) into per-arch site_packages dirs."""
         for arch in self.android_data.archs:
             cls = _ARCH_TO_PLATFORM_CLS.get(arch)
@@ -148,28 +148,6 @@ class SimpleCommands:
                     return action
         raise ValueError(f"{parser.prog!r} has no subparsers registered")
 
-    def _register(self, subparsers: argparse._SubParsersAction) -> None:
-        actions = subparsers.choices.items()
-        print(f"[SimplePlugin] Registering 'simple' subcommand. Existing subcommands: {[a[0] for a in actions]}")
-
-        for name, action in actions:
-            match name:
-                case "android":
-                    print("[SimplePlugin] Found existing 'android' subcommand. Skipping registration.")
-                    #action.add_parser("simple", help="simple plugin commands")
-                    group: argparse._ArgumentGroup = action._subparsers
-                    print(f"[SimplePlugin] Existing 'android' subcommand actions: {group._actions}")
-                    action._subparsers.add_parser("simple", help="simple plugin commands")
-                case "apple":
-                    break
-                    #print("[SimplePlugin] Found existing 'apple' subcommand. Skipping registration.", dir(action))
-
-        exit(f"[SimplePlugin] Registering 'simple' subcommand. Existing subcommands: {[a[0] for a in actions]}")
-        simple: argparse.ArgumentParser = subparsers.add_parser("simple", help="simple plugin commands")
-        sub = simple.add_subparsers(dest="subcommand", required=True)
-        android = sub.add_parser("android", help="Android / Gradle commands")
-        android.set_defaults(func=self.run_gradle)
-
     def run_gradle(self, args: argparse.Namespace) -> int:
 
         project = OverrideProject()
@@ -186,7 +164,7 @@ class SimpleCommands:
 
     def run_xcode(self, args: argparse.Namespace) -> int:
 
-        project = XcodeProject(Path.cwd())
+        project = XcodeProject()
 
         project.macos_build()
 
@@ -196,7 +174,7 @@ class SimpleCommands:
 
     def run_xcode_ios(self, args: argparse.Namespace, sim: bool = False) -> int:
 
-        project = XcodeProject(Path.cwd())
+        project = XcodeProject()
 
         project.ios_build(simulator=sim)
 
