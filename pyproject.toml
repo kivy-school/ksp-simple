@@ -1,5 +1,5 @@
 [project]
-name = "ksp-command-plugin"
+name = "ksp-simple"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -7,7 +7,9 @@ authors = [
     { name = "psychowasp", email = "psychowaspx@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "ksproject",
+]
 
 
 
@@ -17,8 +19,5 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ksproject",
 ]
 
-[tool.uv.sources]
-ksproject = { path = "../ksproject" }
